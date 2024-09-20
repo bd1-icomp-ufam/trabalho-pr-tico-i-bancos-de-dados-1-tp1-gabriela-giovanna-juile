@@ -11,9 +11,9 @@
 
 DB_HOST = 'localhost'
 DB_PORT = '5432'
-DB_NAME = 'database'
-DB_USER = 'username'
-DB_PASS = 'password'
+DB_NAME = 'tp1'
+DB_USER = 'postgres'
+DB_PASS = 'postgres'
 
 import re
 import psycopg2
@@ -50,9 +50,40 @@ class Database:
     if (self.connection):
       self.connection.close()
     print('Encerrada conexão com o banco de dados.')
+    
+  def opcao_a(self):
+    try:
+      product_id = 15
+      print(self.cursor.execute("SELECT title FROM products WHERE id = %s", (product_id,)))
+      result = self.cursor.fetchone()
+
+      if result:
+        print(result[0])
+      else:
+        print("No product found with this ID.")
+
+    except Exception as e:
+      print('Não foi possível realizar a consulta a')
+      self.connection.commit()
+
+  def opcao_b(self):
+    
+  
+  def opcao_c(self):
+
+  def opcao_d(self):
+
+  def opcao_e(self):
+
+  def opcao_f(self):
+
+  def opcao_g(self):
+
+  
+  
 
 def main():
-    # prune_file(FILE_PATH, 'input/amazon-meta-10000.txt', 10000)
+    # prune_file(FILE_PATH, 'amazon-meta-light.txt')
   
     database = Database()
   
@@ -67,6 +98,8 @@ def main():
     print("e) Consultar os 10 produtos com a maior média de avaliações úteis positivas por produto.")
     print("f) Consultar as 5 categorias de produto com a maior média de avaliações úteis positivas por produto.")
     print("g) Consultar os 10 clientes que mais fizeram comentários por grupo de produto.")
+
+    database.opcao_a()
 
 if __name__ == '__main__':
   main()
