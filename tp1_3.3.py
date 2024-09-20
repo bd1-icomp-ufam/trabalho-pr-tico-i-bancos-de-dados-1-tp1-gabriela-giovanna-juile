@@ -82,7 +82,21 @@ class Database:
       print(f"Não foi possível realizar a consulta a. Erro: {e}")
 
   def opcao_b(self):
-    product_asin = input("\nVocê escolheu a opção b! Digite o ASIN do produto a ser consultado: ")
+    try:
+      product_asin = input("\nVocê escolheu a opção b! Digite o ASIN do produto a ser consultado: ")
+
+      self.cursor.execute("SELECT p2.asin, p2.title, p2.salesrank FROM products p1 JOIN similar_products sp ON p1.id = sp.product_id JOIN products p2 ON p2.asin = sp.similar_asin WHERE p1.asin = (%s) AND p2.salesrank < p1.salesrank ORDER BY p2.salesrank ASC;", (product_asin,))
+      results = self.cursor.fetchall()
+
+      if results:
+        print("\nasin    title   salesrank")
+        for result in results:
+          print(result[0], result[1], result[2])
+      else:
+        print("Nenhum resultado encontrado.")
+
+    except Exception as e:
+      print(f"Não foi possível realizar a consulta a. Erro: {e}")
 
   def opcao_c(self):
     try:
