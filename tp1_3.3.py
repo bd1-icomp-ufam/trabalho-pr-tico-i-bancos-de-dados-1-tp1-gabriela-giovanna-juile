@@ -53,44 +53,77 @@ class Database:
     
   def opcao_a(self):
     try:
-      product_id = 15
-      print(self.cursor.execute("SELECT title FROM products WHERE id = %s", (product_id,)))
-      result = self.cursor.fetchone()
+      product_asin = input("\nVocê escolheu a opção a! Digite o ASIN do produto a ser consultado: ")
 
-      if result:
-        print(result[0])
+      self.cursor.execute("SELECT id FROM products WHERE asin=(%s)", (product_asin,))
+      product_id=self.cursor.fetchone()[0]
+
+      self.cursor.execute("SELECT reviews.customer, date, rating, votes, helpful FROM reviews, customers WHERE reviews.customer=customers.customer AND product_id=(%s) ORDER BY helpful DESC, rating DESC LIMIT 5", (product_id,))
+      results = self.cursor.fetchall()
+
+      if results:
+        print("\nOs 5 comentários mais úteis e com maior avaliação:\n\ncustomer          date    rating votes helpful")
+        for result in results:
+          print(result[0], result[1], "  ", result[2], "    ", result[3], "    ", result[4])
       else:
-        print("No product found with this ID.")
+        print("Nenhum resultado encontrado.")
+
+      self.cursor.execute("SELECT reviews.customer, date, rating, votes, helpful FROM reviews, customers WHERE reviews.customer=customers.customer AND product_id=(%s) ORDER BY helpful DESC, rating ASC LIMIT 5", (product_id,))
+      results = self.cursor.fetchall()
+
+      if results:
+        print("\nOS 5 comentários mais úteis e com menor avaliação:\n\ncustomer          date    rating  votes  helpful")
+        for result in results:
+          print(result[0], result[1], "  ", result[2], "    ", result[3], "    ", result[4])
+      else:
+        print("Nenhum resultado encontrado.")
 
     except Exception as e:
-      print('Não foi possível realizar a consulta a')
-      self.connection.commit()
+      print(f"Não foi possível realizar a consulta a. Erro: {e}")
 
   def opcao_b(self):
-    
-  
+    product_asin = input("\nVocê escolheu a opção b! Digite o ASIN do produto a ser consultado: ")
+
   def opcao_c(self):
+    try:
+      product_asin = input("\nVocê escolheu a opção c! Digite o ASIN do produto a ser consultado: ")
 
-  def opcao_d(self):
+      self.cursor.execute("SELECT id FROM products WHERE asin=(%s)", (product_asin,))
+      product_id=self.cursor.fetchone()[0]
 
-  def opcao_e(self):
+      self.cursor.execute("SELECT date, AVG(rating) AS avg_rating FROM reviews WHERE product_id=(%s) GROUP BY date ORDER BY date ASC;", (product_id,))
+      results = self.cursor.fetchall()
 
-  def opcao_f(self):
+      if results:
+        print("\ndate           avg_rating")
+        for result in results:
+          print(result[0], result[1])
+      else:
+        print("Nenhum resultado encontrado.")
 
-  def opcao_g(self):
+    except Exception as e:
+      print(f"Não foi possível realizar a consulta c. Erro: {e}")
 
-  
-  
+  def opcao_d():
+    print("\nVocê escolheu a opção d!")
+
+  def opcao_e():
+    print("\nVocê escolheu a opção e!")
+
+  def opcao_f():
+    print("\nVocê escolheu a opção f!")
+
+  def opcao_g():
+    print("\nVocê escolheu a opção g!")
 
 def main():
-    # prune_file(FILE_PATH, 'amazon-meta-light.txt')
   
     database = Database()
   
     print('Conectando com o Banco de Dados...')
     database.connect()
 
-    print("DASHBOARD MENU\n")
+    print("\nDASHBOARD MENU\n")
     print("a) Consultar os 5 comentários mais úteis e com maior avaliação e os 5 comentários mais úteis e com menor avaliação de um produto.") 
     print("b) Consultar os produtos similares com maiores vendas do que o produto.")
     print("c) Consultar a evolução diária das médias de avaliação ao longo do intervalo de tempo coberto no arquivo de entrada.")
@@ -99,7 +132,28 @@ def main():
     print("f) Consultar as 5 categorias de produto com a maior média de avaliações úteis positivas por produto.")
     print("g) Consultar os 10 clientes que mais fizeram comentários por grupo de produto.")
 
-    database.opcao_a()
+    while True:
+      opcao = input("\nEscolha uma opção entre a e g (ou 's' para sair): ").lower()
+
+      if opcao == 'a':
+        database.opcao_a()
+      elif opcao == 'b':
+        database.opcao_b()
+      elif opcao == 'c':
+        database.opcao_c()
+      elif opcao == 'd':
+        database.opcao_d()
+      elif opcao == 'e':
+        database.opcao_e()
+      elif opcao == 'f':
+        database.opcao_f()
+      elif opcao == 'g':
+        database.opcao_g()
+      elif opcao == 's':
+        print("Encerrando o programa.")
+        break  
+      else:
+        print("Você escolheu uma opção inválida!")
 
 if __name__ == '__main__':
   main()
