@@ -37,7 +37,7 @@ Caso deseje utilizar a versão do banco de dados Postgres com o `docker-compose.
 1. Clone o projeto
 
 ```
-$ git clone https://github.com/juhanada/bd_tp1_gabriela_giovanna_juile.git](https://github.com/bd1-icomp-ufam/trabalho-pr-tico-i-bancos-de-dados-1-tp1-gabriela-giovanna-juile
+$ git clone https://github.com/bd1-icomp-ufam/trabalho-pr-tico-i-bancos-de-dados-1-tp1-gabriela-giovanna-juile
 ```
 
 2. Faça o download do arquivo de entrada no link https://snap.stanford.edu/data/amazon-meta.html
