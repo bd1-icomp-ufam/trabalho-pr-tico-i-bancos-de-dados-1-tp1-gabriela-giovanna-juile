@@ -121,7 +121,7 @@ import psycopg2
 
 # para poda de arquivos
 def prune_file(input, output, lines):
-  with open(input, 'r', encoding = "utf8") as entrada, open(output, 'w') as saida:
+  with open(input, 'r') as entrada, open(output, 'w') as saida:
     for i, linha in enumerate(entrada):
       if (i > lines):
         break
@@ -279,7 +279,7 @@ def main():
   skip = True
   cont_product = 0  
   
-  with open(FILE_PATH, 'r', encoding = "utf8") as f:
+  with open(FILE_PATH, 'r') as f:
     for linha in f:
       
       stripped_line = linha.strip()
