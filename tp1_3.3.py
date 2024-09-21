@@ -11,9 +11,9 @@
 
 DB_HOST = 'localhost'
 DB_PORT = '5432'
-DB_NAME = 'tp1'
+DB_NAME = 'database'
 DB_USER = 'postgres'
-DB_PASS = 'postgres'
+DB_PASS = 'senha'
 
 import re
 import psycopg2
@@ -118,17 +118,97 @@ class Database:
     except Exception as e:
       print(f"Não foi possível realizar a consulta c. Erro: {e}")
 
-  def opcao_d():
+  def opcao_d(self):
     print("\nVocê escolheu a opção d!")
+    try:
+        self.cursor.execute("""
+            SELECT group_title, title, salesrank
+            FROM (
+                SELECT group_title, title, salesrank,
+                    ROW_NUMBER() OVER (PARTITION BY group_title ORDER BY salesrank ASC) as rn
+                FROM products
+            ) as ranked
+            WHERE rn <= 10
+            ORDER BY group_title, salesrank ASC;
+        """)
+        top_products = self.cursor.fetchall()
 
-  def opcao_e():
+        print("\nOs 10 produtos líderes de venda em cada grupo:\n")
+        for product in top_products:
+            print(product)
+
+    except Exception as e:
+        print(f"Não foi possível realizar a consulta d. Erro: {e}")    
+
+  def opcao_e(self):
     print("\nVocê escolheu a opção e!")
+    try:
+        self.cursor.execute("""
+            SELECT p.title, ROUND(AVG(r.helpful),2) AS avg_helpful
+            FROM reviews r
+            JOIN products p ON r.product_id = p.id
+            GROUP BY p.title
+            ORDER BY avg_helpful DESC
+            LIMIT 10
+        """)
+        helpful_products = self.cursor.fetchall()
 
-  def opcao_f():
+        print("\nOs 10 produtos com a maior média de avaliações úteis positivas:\n")
+        for product in helpful_products:
+            print(product)
+
+    except Exception as e:
+        print(f"Não foi possível realizar a consulta e. Erro: {e}")
+
+        
+  def opcao_f(self):
     print("\nVocê escolheu a opção f!")
 
-  def opcao_g():
+    try:
+        self.cursor.execute("""
+            SELECT c.title, AVG(r.helpful) AS avg_helpful
+            FROM reviews r
+            JOIN products_categories pc ON r.product_id = pc.product_id
+            JOIN categories c ON pc.category_id = c.id
+            GROUP BY c.title
+            ORDER BY avg_helpful DESC
+            LIMIT 5
+        """)
+        helpful_categories = self.cursor.fetchall()
+
+        print("\nAs 5 categorias de produto com a maior média de avaliações úteis positivas:\n")
+        for category in helpful_categories:
+            print(category)
+
+    except Exception as e:
+        print(f"Não foi possível realizar a consulta f. Erro: {e}")
+
+
+  def opcao_g(self):
     print("\nVocê escolheu a opção g!")
+    try:
+        self.cursor.execute("""
+            SELECT customer, group_title, review_count
+            FROM (
+                SELECT c.customer, p.group_title, COUNT(*) AS review_count,
+                    ROW_NUMBER() OVER (PARTITION BY p.group_title ORDER BY COUNT(*) DESC) as rn
+                FROM reviews r
+                JOIN customers c ON r.customer = c.customer
+                JOIN products p ON r.product_id = p.id
+                GROUP BY c.customer, p.group_title
+            ) AS ranked
+            WHERE rn <= 10
+            ORDER BY group_title, review_count DESC;
+        """)
+
+        top_customers = self.cursor.fetchall()
+
+        print("\nOs 10 clientes que mais fizeram comentários por grupo de produto:\n")
+        for customer in top_customers:
+            print(customer)
+
+    except Exception as e:
+        print(f"Não foi possível realizar a consulta g. Erro: {e}")
 
 def main():
   
