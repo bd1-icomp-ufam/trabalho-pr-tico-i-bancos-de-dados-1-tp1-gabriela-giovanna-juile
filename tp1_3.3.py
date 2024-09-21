@@ -11,9 +11,9 @@
 
 DB_HOST = 'localhost'
 DB_PORT = '5432'
-DB_NAME = 'database'
+DB_NAME = 'tp1'
 DB_USER = 'postgres'
-DB_PASS = 'senha'
+DB_PASS = 'postgres'
 
 import re
 import psycopg2
@@ -53,10 +53,7 @@ class Database:
     
   def opcao_a(self):
     try:
-      product_asin = input("\nVocê escolheu a opção a! Digite o ASIN do produto a ser consultado: ")
-
-      self.cursor.execute("SELECT id FROM products WHERE asin=(%s)", (product_asin,))
-      product_id=self.cursor.fetchone()[0]
+      product_id = input("\nVocê escolheu a opção a! Digite o id do produto a ser consultado: ")
 
       self.cursor.execute("SELECT reviews.customer, date, rating, votes, helpful FROM reviews, customers WHERE reviews.customer=customers.customer AND product_id=(%s) ORDER BY helpful DESC, rating DESC LIMIT 5", (product_id,))
       results = self.cursor.fetchall()
@@ -83,13 +80,14 @@ class Database:
 
   def opcao_b(self):
     try:
-      product_asin = input("\nVocê escolheu a opção b! Digite o ASIN do produto a ser consultado: ")
+      product_id = input("\nVocê escolheu a opção b! Digite o id do produto a ser consultado: ")
 
-      self.cursor.execute("SELECT p2.asin, p2.title, p2.salesrank FROM products p1 JOIN similar_products sp ON p1.id = sp.product_id JOIN products p2 ON p2.asin = sp.similar_asin WHERE p1.asin = (%s) AND p2.salesrank < p1.salesrank ORDER BY p2.salesrank ASC;", (product_asin,))
+      self.cursor.execute("SELECT p2.asin, p2.title, p2.salesrank FROM products p1 JOIN similar_products sp ON p1.id = sp.product_id JOIN products p2 ON p2.asin = sp.similar_asin WHERE p1.id = (%s) AND p2.salesrank < p1.salesrank ORDER BY p2.salesrank ASC;", (product_id,))      
       results = self.cursor.fetchall()
 
       if results:
-        print("\nasin    title   salesrank")
+        print(f"\nEsses são os produtos similares com maiores vendas que o produto {product_id}:\n\nasin    title   salesrank")
+
         for result in results:
           print(result[0], result[1], result[2])
       else:
@@ -100,10 +98,7 @@ class Database:
 
   def opcao_c(self):
     try:
-      product_asin = input("\nVocê escolheu a opção c! Digite o ASIN do produto a ser consultado: ")
-
-      self.cursor.execute("SELECT id FROM products WHERE asin=(%s)", (product_asin,))
-      product_id=self.cursor.fetchone()[0]
+      product_id = input("\nVocê escolheu a opção c! Digite o id do produto a ser consultado: ")
 
       self.cursor.execute("SELECT date, AVG(rating) AS avg_rating FROM reviews WHERE product_id=(%s) GROUP BY date ORDER BY date ASC;", (product_id,))
       results = self.cursor.fetchall()
