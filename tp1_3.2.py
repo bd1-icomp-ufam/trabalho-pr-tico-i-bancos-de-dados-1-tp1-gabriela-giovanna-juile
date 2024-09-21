@@ -17,7 +17,7 @@ DB_PASS = 'postgres'
 
 # ARGUMENTOS PARA EXECUÇÃO DO SCRIPT
 
-FILE_PATH = 'amazon-meta-10000.txt'
+FILE_PATH = 'amazon-meta.txt'
 SKIP_ID = 0
 LOG_INTERVAL = 100
 
