@@ -166,7 +166,7 @@ class Database:
 
     try:
         self.cursor.execute("""
-            SELECT c.title, AVG(r.helpful) AS avg_helpful
+            SELECT c.title, ROUND(AVG(r.helpful),2) AS avg_helpful
             FROM reviews r
             JOIN products_categories pc ON r.product_id = pc.product_id
             JOIN categories c ON pc.category_id = c.id
